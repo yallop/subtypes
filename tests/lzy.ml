@@ -14,7 +14,7 @@ sig
 end
 
 
-module Lazy_sub (S: sig type (-_,+_) sub val refl : ('a,'a) sub val coerce : ('a,'b) sub -> 'a -> 'b end) : LAZY =
+module Lazy_sub (S: Subtypes.SUB) : LAZY =
 struct
   open S
 
@@ -23,16 +23,16 @@ struct
     | Value of 'a
     | Exception of exn
 
-  type +_ t = L : ('a, 'b) sub * 'a lazy_cell ref -> 'b t
+  type +_ t = L : ('a, 'b) S.t * 'a lazy_cell ref -> 'b t
 
   let delay f = L (refl, ref (Thunk f))
 
   let force (L (sub, r)) =
     match !r with
     | Thunk f -> (match f () with
-                  | v -> r := Value v; coerce sub v
+                  | v -> r := Value v; v >: sub
                   | exception e -> r := Exception e; raise e)
-    | Value v -> coerce sub v
+    | Value v -> v >: sub
     | Exception e -> raise e
 end
 
@@ -56,4 +56,3 @@ struct
 
   let force f = f ()
 end
-

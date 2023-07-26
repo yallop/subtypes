@@ -1,11 +1,8 @@
 open Subtypes
 
-type (-'a,+'b) sub = ('a, 'b) Diag.Sub.t
-let refl = Diag.Sub.refl
-let coerce = Diag.coerce
-
-
-
+type (-'a,+'b) sub = ('a, 'b) Sub.t
+let refl = Sub.refl
+let coerce sub x = Sub.(>:) x sub
 
 (* Some arrays *)
 
