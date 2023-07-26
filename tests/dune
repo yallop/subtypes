@@ -1,0 +1,9 @@
+(test
+ (name arr)
+ (modules arr)
+ (libraries subtypes))
+
+(test
+ (name lzy)
+ (modules lzy)
+ (libraries subtypes))

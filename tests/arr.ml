@@ -1,3 +1,5 @@
+open Subtypes
+
 type (-'a,+'b) sub = ('a, 'b) Diag.Sub.t
 let refl = Diag.Sub.refl
 let coerce = Diag.coerce
