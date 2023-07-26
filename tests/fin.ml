@@ -1,4 +1,4 @@
-open Subtypes.Weaken
+open Subtypes.Diag
 
 type z = [`Zero]
 
@@ -10,7 +10,7 @@ let z_sub_one : (z, z suc) sub =
 
 let inductive_step : 'n. ('n, 'n suc) sub -> ('n suc, 'n suc suc) sub =
   fun sub -> let module M = struct type +'a t = 'a suc end in
-    lift {M} sub
+    liftPos {M} sub
 
 type 'n nat =
     Z : z nat
@@ -30,7 +30,7 @@ type +_ fin =
 module Fin = struct type 'a t = 'a fin end
 
 let weaken : type n. n nat -> n fin -> n suc fin =
-  fun nat s ->  (s >: lift {Fin} (nat_sub nat))
+  fun nat s ->  (s >: liftPos {Fin} (nat_sub nat))
 
 module M =
 struct
@@ -42,6 +42,6 @@ struct
     type +'n suc = 'n
     let sub = refl
   end
-  let weaken s = (s >: lift {Fin} Nat.sub)
+  let weaken s = (s >: liftPos {Fin} Nat.sub)
 
 end

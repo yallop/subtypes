@@ -1,4 +1,4 @@
 (library
  (public_name subtypes)
- (modules diag eq extras inter weaken)
+ (modules diag eq)
  (synopsis "First-class subtypes for OCaml"))

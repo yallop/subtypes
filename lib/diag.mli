@@ -35,3 +35,83 @@ module CtxSub : DIAG with type (-'a, +'b) t = {P:POS} -> ('a P.t -> 'b P.t)
 (* We can convert back and forth between both types of witness *)
 val ctxsub_of_sub : ('a, 'b) Sub.t -> ('a, 'b) CtxSub.t
 val sub_of_ctxsub : ('a, 'b) CtxSub.t -> ('a, 'b) Sub.t
+
+module Id : sig type 'a t = 'a end
+
+module Compose(F:POS)(G:POS) : sig type 'a t = 'a F.t G.t end
+
+type (-'a, +'b) sub = {P:POS} -> ('a P.t -> 'b P.t)
+
+val refl : ('a, 'a) sub
+
+val liftPos : {P:POS} -> ('a,'b) sub -> ('a P.t,'b P.t) sub
+
+val (>:) : 'a -> ('a, 'b) sub -> 'b
+
+module Neg :
+sig
+  module type NEG = sig type -'a t end
+
+  (* module Id = struct type 'a t = 'a end *)
+
+  module Compose(F:POS)(G:NEG) :
+    sig type 'a t = 'a F.t G.t end
+
+  type (-'a, +'b) sub = {N:NEG} -> ('b N.t -> 'a N.t)
+
+  val refl : ('a, 'a) sub
+
+  val lift : {P:POS} -> ('a,'b) sub -> ('a P.t,'b P.t) sub
+
+  val (>:) : 'a -> ('a, 'b) sub -> 'b
+end
+
+
+(* Some extra operators *)
+
+(* positive contexts *)
+module type NEG = sig type -'a t end
+
+(* the basic subtyping interface *)
+module type SUB =
+sig
+  include DIAG
+  val lift : {P:POS} -> ('a, 'b) t -> ('a P.t, 'b P.t) t
+  val (>:) : 'a -> ('a, 'b) t -> 'b
+end
+
+module Derived(S: SUB) : sig
+  val trans : ('a, 'b) S.t -> ('b, 'c) S.t -> ('a, 'c) S.t
+  val liftNeg : {N:NEG} -> ('a, 'b) S.t -> ('b N.t, 'a N.t) S.t
+end
+
+                           (* Conversions between the various encodings.*)
+
+(* We can convert between any two implementations of SUB. *)
+val sub_of_sub : {B: SUB} -> {A:SUB} -> ('a, 'b) A.t -> ('a, 'b) B.t
+
+type (-'a, +'b) sub_diag = {D : DIAG} -> ('a, 'b) D.t
+
+module Diag : SUB with type ('a, 'b) t = ('a, 'b) sub_diag
+
+(* pos *)
+type (-'a, +'b) sub_pos = {P:POS} -> ('a P.t -> 'b P.t)
+
+module Pos : SUB with type ('a, 'b) t = ('a, 'b) sub_pos
+
+(* neg *)
+type (-'a, +'b) sub_neg = {N:NEG} -> ('b N.t -> 'a N.t)
+
+(* conversions *)
+val pos_of_neg : ('a, 'b) sub_neg -> ('a, 'b) sub_pos
+
+val diag_of_pos : ('a, 'b) sub_pos -> ('a, 'b) sub_diag
+
+val neg_of_diag : ('a, 'b) sub_diag -> ('a, 'b) sub_neg
+
+(* (the remainder can be obtained via composition) *)
+val pos_of_diag : ('a, 'b) sub_diag -> ('a, 'b) sub_pos
+
+val diag_of_neg : ('a, 'b) sub_neg -> ('a, 'b) sub_diag
+
+val neg_of_pos : ('a, 'b) sub_pos -> ('a, 'b) sub_neg
