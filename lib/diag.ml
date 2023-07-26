@@ -44,16 +44,6 @@ let lift : type a b . {P : POS} -> (a, b) Sub.t -> (a P.t, b P.t) Sub.t =
   fun {P : POS} -> elim {Lift (P) (Sub)}
 
 
-(* Example *)
-module PosList = struct type 'a t = 'a list end
-module PosSnd = struct type 'a t = int * 'a end
-let apply : type a b . (a, b) Sub.t -> (int * a) list -> (int * b) list =
-  fun s ->
-    coerce (lift {PosList} (lift {PosSnd} s))
-
-
-
-
 (* This definition is an alternative to subtyping witnesses defined by contexts *)
 module CtxSub = struct
   type (-'a, +'b) t = {P:POS} -> ('a P.t -> 'b P.t)
@@ -63,10 +53,10 @@ end
 
 (* We can convert back and forth between both types of witness *)
 
-let iso_1 : type a b . (a, b) Sub.t -> (a, b) CtxSub.t =
+let ctxsub_of_sub : type a b . (a, b) Sub.t -> (a, b) CtxSub.t =
   fun s -> elim {CtxSub} s
 
-let iso_2 : type a b . (a, b) CtxSub.t -> (a, b) Sub.t =
+let sub_of_ctxsub : type a b . (a, b) CtxSub.t -> (a, b) Sub.t =
   fun s ->
   let module P = struct type 'b t = (a, 'b) Sub.t end in
   s {P} Sub.refl

@@ -2,7 +2,6 @@
 
 (* contexts *)
 module type CONTEXT = sig type 'a t end
-module type POS = sig type +'a t end
 
 (* diag, with no variance *)
 module type DIAG = sig

@@ -7,3 +7,8 @@
  (name lzy)
  (modules lzy)
  (libraries subtypes))
+
+(test
+ (name diag_list)
+ (modules diag_list)
+ (libraries subtypes))
