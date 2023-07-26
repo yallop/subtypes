@@ -12,3 +12,8 @@
  (name diag_list)
  (modules diag_list)
  (libraries subtypes))
+
+(test
+ (name fin)
+ (modules fin)
+ (libraries subtypes))
