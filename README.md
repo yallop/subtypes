@@ -1,5 +1,7 @@
 ## Subtypes: first-class subtypes for OCaml
 
+![build status](https://github.com/yallop/subtypes/workflows/Subtypes/badge.svg)
+
 This package provides first-class subtypes for OCaml, analogous to Generalized Algebraic Data Types (GADTs).
 
 GADTS support first-class type equality witnesses, so that a value [`(a, b) Type.eq`](https://github.com/ocaml/ocaml/blob/2a1cdfaa9d1d0b545ce9dc7ba7bf36232e59a56e/stdlib/type.mli#L22) is a run-time warrant that `a` and `b` are equal.
